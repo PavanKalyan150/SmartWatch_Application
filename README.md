@@ -8,7 +8,7 @@ A secure, testable RESTful API for a smartwatch leaderboard gaming platform deve
 - **Spring Data JPA**: Relational MySQL schema mapping Users, Devices, Tasks, Challenges, Leaderboards, and Badges.
 - **Embedded Kafka Broker**: Launches an in-memory Kafka broker programmatically on port `9092` at startup for telemetry ingestion without external dependencies.
 - **Spring Batch 5.0**: Automated challenge ranking (Reader-Processor-Writer) and gamification badges issuance.
-- **Swagger UI**: API discoverability at `http://localhost:8080/swagger-ui.html`.
+- **Swagger UI**: API discoverability at `http://localhost:8081/swagger-ui.html`.
 - **JUnit 5 & MockMvc**: Integration testing with >70% coverage.
 - **Jackson Masking Serializers**: Automatically masks phone numbers (`******7890`) and email addresses (`j***e@domain.com`) in JSON responses.
 
@@ -47,12 +47,12 @@ View the coverage report at `target/site/jacoco/index.html`.
 
 ### 1. Public Health Check
 ```bash
-curl -X GET http://localhost:8080/health
+curl -X GET http://localhost:8081/health
 ```
 
 ### 2. User Registration (supports ROLE_USER or ROLE_ADMIN)
 ```bash
-curl -X POST http://localhost:8080/auth/register \
+curl -X POST http://localhost:8081/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "phone": "9876543210",
@@ -77,7 +77,7 @@ curl -X POST http://localhost:8080/auth/register \
 
 ### 3. Login (returns Access Token)
 ```bash
-curl -X POST http://localhost:8080/auth/login \
+curl -X POST http://localhost:8081/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "phone": "9876543210",
@@ -87,7 +87,7 @@ curl -X POST http://localhost:8080/auth/login \
 
 ### 4. Create a Device Model (Admin only)
 ```bash
-curl -X POST http://localhost:8080/device \
+curl -X POST http://localhost:8081/device \
   -H "Authorization: Bearer <TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
