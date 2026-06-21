@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">watch-leaderboard</a> &gt; <a href="index.source.html" class="el_package">com.leaderboard.model</a> &gt; <span class="el_source">UserActivity.java</span></div><h1>UserActivity.java</h1><pre class="source lang-java linenums">package com.leaderboard.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = &quot;user_activities&quot;, uniqueConstraints = {
+    @UniqueConstraint(columnNames = {&quot;user_id&quot;, &quot;activity_date&quot;})
+})
+public class UserActivity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = &quot;user_id&quot;, nullable = false)
+    private User user;
+
+    @Column(name = &quot;activity_date&quot;, nullable = false)
+    private LocalDate activityDate;
+
+<span class="pc" id="L25">    @Column(nullable = false)</span>
+<span class="pc" id="L26">    private Integer stepCount = 0;</span>
+
+<span class="pc" id="L28">    @ElementCollection(fetch = FetchType.EAGER)</span>
+    @CollectionTable(name = &quot;user_activity_features&quot;, joinColumns = @JoinColumn(name = &quot;user_activity_id&quot;))
+    @Column(name = &quot;feature&quot;)
+    private Set&lt;String&gt; features = new HashSet&lt;&gt;();
+
+<span class="fc" id="L33">    public UserActivity() {}</span>
+
+<span class="nc" id="L35">    public UserActivity(User user, LocalDate activityDate, Integer stepCount, Set&lt;String&gt; features) {</span>
+<span class="nc" id="L36">        this.user = user;</span>
+<span class="nc" id="L37">        this.activityDate = activityDate;</span>
+<span class="nc" id="L38">        this.stepCount = stepCount;</span>
+<span class="nc" id="L39">        this.features = features;</span>
+<span class="nc" id="L40">    }</span>
+
+    public Long getId() {
+<span class="nc" id="L43">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="nc" id="L47">        this.id = id;</span>
+<span class="nc" id="L48">    }</span>
+
+    public User getUser() {
+<span class="nc" id="L51">        return user;</span>
+    }
+
+    public void setUser(User user) {
+<span class="nc" id="L55">        this.user = user;</span>
+<span class="nc" id="L56">    }</span>
+
+    public LocalDate getActivityDate() {
+<span class="nc" id="L59">        return activityDate;</span>
+    }
+
+    public void setActivityDate(LocalDate activityDate) {
+<span class="nc" id="L63">        this.activityDate = activityDate;</span>
+<span class="nc" id="L64">    }</span>
+
+    public Integer getStepCount() {
+<span class="nc" id="L67">        return stepCount;</span>
+    }
+
+    public void setStepCount(Integer stepCount) {
+<span class="nc" id="L71">        this.stepCount = stepCount;</span>
+<span class="nc" id="L72">    }</span>
+
+    public Set&lt;String&gt; getFeatures() {
+<span class="nc" id="L75">        return features;</span>
+    }
+
+    public void setFeatures(Set&lt;String&gt; features) {
+<span class="nc" id="L79">        this.features = features;</span>
+<span class="nc" id="L80">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

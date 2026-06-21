@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">watch-leaderboard</a> &gt; <a href="index.source.html" class="el_package">com.leaderboard.service</a> &gt; <span class="el_source">GameService.java</span></div><h1>GameService.java</h1><pre class="source lang-java linenums">package com.leaderboard.service;
+
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.stereotype.Service;
+
+@Service
+public class GameService {
+
+    private final JobLauncher jobLauncher;
+    private final Job gamificationJob;
+
+<span class="fc" id="L15">    public GameService(JobLauncher jobLauncher, Job gamificationJob) {</span>
+<span class="fc" id="L16">        this.jobLauncher = jobLauncher;</span>
+<span class="fc" id="L17">        this.gamificationJob = gamificationJob;</span>
+<span class="fc" id="L18">    }</span>
+
+    public void runGamificationJob() throws Exception {
+<span class="fc" id="L21">        JobParameters params = new JobParametersBuilder()</span>
+<span class="fc" id="L22">                .addLong(&quot;timestamp&quot;, System.currentTimeMillis())</span>
+<span class="fc" id="L23">                .toJobParameters();</span>
+<span class="fc" id="L24">        jobLauncher.run(gamificationJob, params);</span>
+<span class="fc" id="L25">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

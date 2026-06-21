@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChallengeService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">watch-leaderboard</a> &gt; <a href="index.source.html" class="el_package">com.leaderboard.service</a> &gt; <span class="el_source">ChallengeService.java</span></div><h1>ChallengeService.java</h1><pre class="source lang-java linenums">package com.leaderboard.service;
+
+import com.leaderboard.model.Challenge;
+import com.leaderboard.model.User;
+import com.leaderboard.model.UserChallenge;
+import com.leaderboard.repository.ChallengeRepository;
+import com.leaderboard.repository.UserChallengeRepository;
+import com.leaderboard.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class ChallengeService {
+
+    private final ChallengeRepository challengeRepository;
+    private final UserChallengeRepository userChallengeRepository;
+    private final UserRepository userRepository;
+
+    public ChallengeService(ChallengeRepository challengeRepository,
+                            UserChallengeRepository userChallengeRepository,
+<span class="fc" id="L26">                            UserRepository userRepository) {</span>
+<span class="fc" id="L27">        this.challengeRepository = challengeRepository;</span>
+<span class="fc" id="L28">        this.userChallengeRepository = userChallengeRepository;</span>
+<span class="fc" id="L29">        this.userRepository = userRepository;</span>
+<span class="fc" id="L30">    }</span>
+
+    public Challenge createChallenge(Challenge challenge) {
+        // If geospatial or city scope is provided, set isGlobal to false
+<span class="pc bpc" id="L34" title="4 of 6 branches missed.">        if (challenge.getCity() != null || (challenge.getLatitude() != null &amp;&amp; challenge.getLongitude() != null)) {</span>
+<span class="nc" id="L35">            challenge.setIsGlobal(false);</span>
+        } else {
+<span class="fc" id="L37">            challenge.setIsGlobal(true);</span>
+        }
+<span class="fc" id="L39">        challenge.setIsProcessed(false);</span>
+<span class="fc" id="L40">        return challengeRepository.save(challenge);</span>
+    }
+
+    public Challenge getChallengeById(Long id) {
+<span class="fc" id="L44">        return challengeRepository.findById(id)</span>
+<span class="pc" id="L45">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Challenge not found with ID: &quot; + id));</span>
+    }
+
+    public Page&lt;UserChallenge&gt; getChallengeUsers(Long challengeId, Pageable pageable) {
+<span class="fc" id="L49">        return userChallengeRepository.findByChallengeId(challengeId, pageable);</span>
+    }
+
+    public Challenge updateChallenge(Long id, Challenge details) {
+<span class="fc" id="L53">        Challenge existing = getChallengeById(id);</span>
+<span class="fc" id="L54">        existing.setTitle(details.getTitle());</span>
+<span class="fc" id="L55">        existing.setDescription(details.getDescription());</span>
+<span class="fc" id="L56">        existing.setRequiredSteps(details.getRequiredSteps());</span>
+<span class="fc" id="L57">        existing.setPointsReward(details.getPointsReward());</span>
+<span class="fc" id="L58">        existing.setExpiryDate(details.getExpiryDate());</span>
+<span class="fc" id="L59">        existing.setRequiredFeatures(details.getRequiredFeatures());</span>
+<span class="fc" id="L60">        existing.setLatitude(details.getLatitude());</span>
+<span class="fc" id="L61">        existing.setLongitude(details.getLongitude());</span>
+<span class="fc" id="L62">        existing.setRadiusKm(details.getRadiusKm());</span>
+<span class="fc" id="L63">        existing.setCity(details.getCity());</span>
+<span class="pc bpc" id="L64" title="4 of 6 branches missed.">        if (details.getCity() != null || (details.getLatitude() != null &amp;&amp; details.getLongitude() != null)) {</span>
+<span class="nc" id="L65">            existing.setIsGlobal(false);</span>
+        } else {
+<span class="fc" id="L67">            existing.setIsGlobal(true);</span>
+        }
+<span class="fc" id="L69">        return challengeRepository.save(existing);</span>
+    }
+
+    public List&lt;Challenge&gt; discoverChallenges(Long userId, Double latitude, Double longitude, String city) {
+<span class="fc" id="L73">        List&lt;Challenge&gt; all = challengeRepository.findAll();</span>
+
+<span class="fc" id="L75">        User user = null;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (userId != null) {</span>
+<span class="fc" id="L77">            user = userRepository.findById(userId).orElse(null);</span>
+        }
+
+<span class="fc" id="L80">        final User finalUser = user;</span>
+<span class="fc" id="L81">        return all.stream()</span>
+<span class="fc" id="L82">                .filter(challenge -&gt; isCompatible(finalUser, challenge))</span>
+<span class="fc" id="L83">                .filter(challenge -&gt; isLocationMatching(challenge, latitude, longitude, city))</span>
+<span class="fc" id="L84">                .collect(Collectors.toList());</span>
+    }
+
+    private boolean isCompatible(User user, Challenge challenge) {
+<span class="pc bpc" id="L88" title="1 of 4 branches missed.">        if (challenge.getRequiredFeatures() == null || challenge.getRequiredFeatures().isEmpty()) {</span>
+<span class="fc" id="L89">            return true;</span>
+        }
+<span class="pc bpc" id="L91" title="1 of 4 branches missed.">        if (user == null || user.getDevice() == null) {</span>
+<span class="fc" id="L92">            return false;</span>
+        }
+<span class="fc" id="L94">        return user.getDevice().getFeatures().containsAll(challenge.getRequiredFeatures());</span>
+    }
+
+    private boolean isLocationMatching(Challenge challenge, Double lat, Double lon, String city) {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (Boolean.TRUE.equals(challenge.getIsGlobal())) {</span>
+<span class="fc" id="L99">            return true;</span>
+        }
+
+        // Check city matching
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (challenge.getCity() != null) {</span>
+<span class="pc bpc" id="L104" title="2 of 4 branches missed.">            if (city != null &amp;&amp; challenge.getCity().equalsIgnoreCase(city.trim())) {</span>
+<span class="fc" id="L105">                return true;</span>
+            }
+        }
+
+        // Check coordinate radius matching
+<span class="pc bpc" id="L110" title="3 of 6 branches missed.">        if (challenge.getLatitude() != null &amp;&amp; challenge.getLongitude() != null &amp;&amp; challenge.getRadiusKm() != null) {</span>
+<span class="pc bpc" id="L111" title="2 of 4 branches missed.">            if (lat != null &amp;&amp; lon != null) {</span>
+<span class="fc" id="L112">                double distance = calculateDistance(lat, lon, challenge.getLatitude(), challenge.getLongitude());</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">                return distance &lt;= challenge.getRadiusKm();</span>
+            }
+        }
+
+<span class="nc" id="L117">        return false;</span>
+    }
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+<span class="fc" id="L121">        double earthRadius = 6371.0; // km</span>
+<span class="fc" id="L122">        double dLat = Math.toRadians(lat2 - lat1);</span>
+<span class="fc" id="L123">        double dLon = Math.toRadians(lon2 - lon1);</span>
+<span class="fc" id="L124">        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +</span>
+<span class="fc" id="L125">                   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *</span>
+<span class="fc" id="L126">                   Math.sin(dLon / 2) * Math.sin(dLon / 2);</span>
+<span class="fc" id="L127">        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));</span>
+<span class="fc" id="L128">        return earthRadius * c;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

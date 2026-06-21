@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChallengeController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">watch-leaderboard</a> &gt; <a href="index.source.html" class="el_package">com.leaderboard.controller</a> &gt; <span class="el_source">ChallengeController.java</span></div><h1>ChallengeController.java</h1><pre class="source lang-java linenums">package com.leaderboard.controller;
+
+import com.leaderboard.model.Challenge;
+import com.leaderboard.model.UserChallenge;
+import com.leaderboard.service.ChallengeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/challenge&quot;)
+public class ChallengeController {
+
+    private final ChallengeService challengeService;
+
+<span class="fc" id="L21">    public ChallengeController(ChallengeService challengeService) {</span>
+<span class="fc" id="L22">        this.challengeService = challengeService;</span>
+<span class="fc" id="L23">    }</span>
+
+    @PostMapping
+    @PreAuthorize(&quot;hasAnyRole('USER', 'ADMIN')&quot;)
+    public ResponseEntity&lt;Challenge&gt; createChallenge(@RequestBody Challenge challenge) {
+<span class="fc" id="L28">        return new ResponseEntity&lt;&gt;(challengeService.createChallenge(challenge), HttpStatus.CREATED);</span>
+    }
+
+    @GetMapping
+    @PreAuthorize(&quot;hasAnyRole('USER', 'ADMIN')&quot;)
+    public ResponseEntity&lt;List&lt;Challenge&gt;&gt; discoverChallenges(
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude,
+            @RequestParam(required = false) String city) {
+<span class="fc" id="L38">        return ResponseEntity.ok(challengeService.discoverChallenges(userId, latitude, longitude, city));</span>
+    }
+
+    @GetMapping(&quot;/{challengeId}&quot;)
+    @PreAuthorize(&quot;hasAnyRole('USER', 'ADMIN')&quot;)
+    public ResponseEntity&lt;Challenge&gt; getChallengeById(@PathVariable Long challengeId) {
+<span class="fc" id="L44">        return ResponseEntity.ok(challengeService.getChallengeById(challengeId));</span>
+    }
+
+    @GetMapping(&quot;/{challengeId}/user&quot;)
+    @PreAuthorize(&quot;hasAnyRole('USER', 'ADMIN')&quot;)
+    public ResponseEntity&lt;Page&lt;UserChallenge&gt;&gt; getChallengeUsers(@PathVariable Long challengeId, Pageable pageable) {
+<span class="fc" id="L50">        return ResponseEntity.ok(challengeService.getChallengeUsers(challengeId, pageable));</span>
+    }
+
+    @PutMapping(&quot;/{challengeId}&quot;)
+    @PreAuthorize(&quot;hasRole('ADMIN')&quot;)
+    public ResponseEntity&lt;Challenge&gt; updateChallenge(@PathVariable Long challengeId, @RequestBody Challenge challenge) {
+<span class="fc" id="L56">        return ResponseEntity.ok(challengeService.updateChallenge(challengeId, challenge));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

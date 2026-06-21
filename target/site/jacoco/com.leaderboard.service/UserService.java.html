@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">watch-leaderboard</a> &gt; <a href="index.source.html" class="el_package">com.leaderboard.service</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package com.leaderboard.service;
+
+import com.leaderboard.model.*;
+import com.leaderboard.repository.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final DeviceRepository deviceRepository;
+    private final UserActivityRepository userActivityRepository;
+    private final TaskRepository taskRepository;
+    private final UserTaskRepository userTaskRepository;
+    private final ChallengeRepository challengeRepository;
+    private final UserChallengeRepository userChallengeRepository;
+
+    public UserService(UserRepository userRepository, DeviceRepository deviceRepository,
+                       UserActivityRepository userActivityRepository, TaskRepository taskRepository,
+                       UserTaskRepository userTaskRepository, ChallengeRepository challengeRepository,
+<span class="fc" id="L25">                       UserChallengeRepository userChallengeRepository) {</span>
+<span class="fc" id="L26">        this.userRepository = userRepository;</span>
+<span class="fc" id="L27">        this.deviceRepository = deviceRepository;</span>
+<span class="fc" id="L28">        this.userActivityRepository = userActivityRepository;</span>
+<span class="fc" id="L29">        this.taskRepository = taskRepository;</span>
+<span class="fc" id="L30">        this.userTaskRepository = userTaskRepository;</span>
+<span class="fc" id="L31">        this.challengeRepository = challengeRepository;</span>
+<span class="fc" id="L32">        this.userChallengeRepository = userChallengeRepository;</span>
+<span class="fc" id="L33">    }</span>
+
+    public User getUserById(Long userId) {
+<span class="fc" id="L36">        return userRepository.findById(userId)</span>
+<span class="pc" id="L37">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;User not found with ID: &quot; + userId));</span>
+    }
+
+    public List&lt;UserActivity&gt; getUserActivities(Long userId) {
+<span class="fc" id="L41">        return userActivityRepository.findByUserIdAndActivityDateBetween(</span>
+                userId,
+<span class="fc" id="L43">                java.time.LocalDate.now().minusDays(30),</span>
+<span class="fc" id="L44">                java.time.LocalDate.now()</span>
+        );
+    }
+
+    @Transactional
+    public User associateDevice(Long userId, Long deviceId) {
+<span class="fc" id="L50">        User user = getUserById(userId);</span>
+<span class="fc" id="L51">        Device device = deviceRepository.findById(deviceId)</span>
+<span class="pc" id="L52">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Device not found with ID: &quot; + deviceId));</span>
+<span class="fc" id="L53">        user.setDevice(device);</span>
+<span class="fc" id="L54">        return userRepository.save(user);</span>
+    }
+
+    @Transactional
+    public UserTask registerForTask(Long userId, Long taskId) {
+<span class="fc" id="L59">        User user = getUserById(userId);</span>
+<span class="fc" id="L60">        Task task = taskRepository.findById(taskId)</span>
+<span class="pc" id="L61">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Task not found with ID: &quot; + taskId));</span>
+
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (userTaskRepository.findByUserIdAndTaskId(userId, taskId).isPresent()) {</span>
+<span class="nc" id="L64">            throw new IllegalArgumentException(&quot;User already registered for this task&quot;);</span>
+        }
+
+<span class="fc" id="L67">        UserTask userTask = new UserTask(user, task);</span>
+<span class="fc" id="L68">        return userTaskRepository.save(userTask);</span>
+    }
+
+    @Transactional
+    public UserChallenge registerForChallenge(Long userId, Long challengeId) {
+<span class="fc" id="L73">        User user = getUserById(userId);</span>
+<span class="fc" id="L74">        Challenge challenge = challengeRepository.findById(challengeId)</span>
+<span class="pc" id="L75">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Challenge not found with ID: &quot; + challengeId));</span>
+
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        if (userChallengeRepository.findByUserIdAndChallengeId(userId, challengeId).isPresent()) {</span>
+<span class="nc" id="L78">            throw new IllegalArgumentException(&quot;User already registered for this challenge&quot;);</span>
+        }
+
+        // Verify device compatibility before registering
+<span class="pc bpc" id="L82" title="2 of 4 branches missed.">        if (challenge.getRequiredFeatures() != null &amp;&amp; !challenge.getRequiredFeatures().isEmpty()) {</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">            if (user.getDevice() == null) {</span>
+<span class="nc" id="L84">                throw new IllegalArgumentException(&quot;Device association required for this challenge&quot;);</span>
+            }
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">            if (!user.getDevice().getFeatures().containsAll(challenge.getRequiredFeatures())) {</span>
+<span class="nc" id="L87">                throw new IllegalArgumentException(&quot;Associated device does not support required features: &quot; + challenge.getRequiredFeatures());</span>
+            }
+        }
+
+<span class="fc" id="L91">        UserChallenge userChallenge = new UserChallenge(user, challenge);</span>
+<span class="fc" id="L92">        return userChallengeRepository.save(userChallenge);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

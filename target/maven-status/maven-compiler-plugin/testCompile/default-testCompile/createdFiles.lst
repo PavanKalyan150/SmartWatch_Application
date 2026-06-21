@@ -1,0 +1,6 @@
+com\leaderboard\WatchLeaderboardApplicationTests.class
+com\leaderboard\controller\UserControllerTest.class
+com\leaderboard\batch\BatchTest.class
+com\leaderboard\controller\AuthControllerTest.class
+com\leaderboard\controller\MiscellaneousControllerTest.class
+com\leaderboard\service\ChallengeServiceTest.class

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BatchConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">watch-leaderboard</a> &gt; <a href="index.source.html" class="el_package">com.leaderboard.config</a> &gt; <span class="el_source">BatchConfig.java</span></div><h1>BatchConfig.java</h1><pre class="source lang-java linenums">package com.leaderboard.config;
+
+import com.leaderboard.model.*;
+import com.leaderboard.repository.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.Chunk;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Configuration
+public class BatchConfig {
+
+    private final JobRepository jobRepository;
+    private final PlatformTransactionManager transactionManager;
+    private final ChallengeRepository challengeRepository;
+    private final UserChallengeRepository userChallengeRepository;
+    private final UserRepository userRepository;
+    private final LeaderboardRepository leaderboardRepository;
+    private final BadgeRepository badgeRepository;
+
+    public BatchConfig(JobRepository jobRepository,
+                       PlatformTransactionManager transactionManager,
+                       ChallengeRepository challengeRepository,
+                       UserChallengeRepository userChallengeRepository,
+                       UserRepository userRepository,
+                       LeaderboardRepository leaderboardRepository,
+<span class="fc" id="L39">                       BadgeRepository badgeRepository) {</span>
+<span class="fc" id="L40">        this.jobRepository = jobRepository;</span>
+<span class="fc" id="L41">        this.transactionManager = transactionManager;</span>
+<span class="fc" id="L42">        this.challengeRepository = challengeRepository;</span>
+<span class="fc" id="L43">        this.userChallengeRepository = userChallengeRepository;</span>
+<span class="fc" id="L44">        this.userRepository = userRepository;</span>
+<span class="fc" id="L45">        this.leaderboardRepository = leaderboardRepository;</span>
+<span class="fc" id="L46">        this.badgeRepository = badgeRepository;</span>
+<span class="fc" id="L47">    }</span>
+
+    // ==========================================
+    // 1. AUTOMATED RANKING BATCH JOB
+    // ==========================================
+
+    @Bean
+    public Job rankingJob() {
+<span class="fc" id="L55">        return new JobBuilder(&quot;rankingJob&quot;, jobRepository)</span>
+<span class="fc" id="L56">                .start(rankingStep())</span>
+<span class="fc" id="L57">                .build();</span>
+    }
+
+    @Bean
+    public Step rankingStep() {
+<span class="fc" id="L62">        return new StepBuilder(&quot;rankingStep&quot;, jobRepository)</span>
+<span class="fc" id="L63">                .&lt;Challenge, List&lt;Leaderboard&gt;&gt;chunk(5, transactionManager)</span>
+<span class="fc" id="L64">                .reader(challengeReader())</span>
+<span class="fc" id="L65">                .processor(challengeProcessor())</span>
+<span class="fc" id="L66">                .writer(challengeWriter())</span>
+<span class="fc" id="L67">                .build();</span>
+    }
+
+    @Bean
+    public ItemReader&lt;Challenge&gt; challengeReader() {
+<span class="fc" id="L72">        return new ItemReader&lt;&gt;() {</span>
+            private List&lt;Challenge&gt; expiredChallenges;
+<span class="fc" id="L74">            private int index = 0;</span>
+
+            @Override
+            public Challenge read() {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                if (expiredChallenges == null) {</span>
+<span class="fc" id="L79">                    expiredChallenges = challengeRepository.findByExpiryDateBeforeAndIsProcessed(LocalDateTime.now(), false);</span>
+                }
+<span class="fc bfc" id="L81" title="All 2 branches covered.">                if (index &lt; expiredChallenges.size()) {</span>
+<span class="fc" id="L82">                    return expiredChallenges.get(index++);</span>
+                }
+<span class="fc" id="L84">                return null; // end of dataset</span>
+            }
+        };
+    }
+
+    @Bean
+    public ItemProcessor&lt;Challenge, List&lt;Leaderboard&gt;&gt; challengeProcessor() {
+<span class="fc" id="L91">        return challenge -&gt; {</span>
+<span class="fc" id="L92">            List&lt;UserChallenge&gt; participants = userChallengeRepository.findByChallengeId(challenge.getId());</span>
+            // Sort participants by score descending
+<span class="fc" id="L94">            participants.sort((uc1, uc2) -&gt; uc2.getScore().compareTo(uc1.getScore()));</span>
+
+<span class="fc" id="L96">            List&lt;Leaderboard&gt; leaderboards = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L97">            int rank = 1;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            for (UserChallenge uc : participants) {</span>
+<span class="fc" id="L99">                uc.setRank(rank);</span>
+
+                // Award points only to completed participants
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                if (Boolean.TRUE.equals(uc.getCompleted())) {</span>
+<span class="fc" id="L103">                    User user = uc.getUser();</span>
+<span class="fc" id="L104">                    int pointsToAward = challenge.getPointsReward();</span>
+
+                    // Bonuses for top positions
+<span class="fc bfc" id="L107" title="All 2 branches covered.">                    if (rank == 1) {</span>
+<span class="fc" id="L108">                        pointsToAward += 100;</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">                    } else if (rank == 2) {</span>
+<span class="fc" id="L110">                        pointsToAward += 50;</span>
+                    }
+
+<span class="fc" id="L113">                    uc.setPointsAwarded(pointsToAward);</span>
+<span class="fc" id="L114">                    user.setPoints(user.getPoints() + pointsToAward);</span>
+<span class="fc" id="L115">                    userRepository.save(user);</span>
+                }
+
+<span class="fc" id="L118">                userChallengeRepository.save(uc);</span>
+
+<span class="fc" id="L120">                Leaderboard entry = new Leaderboard(challenge, uc.getUser(), rank, uc.getScore());</span>
+<span class="fc" id="L121">                leaderboards.add(entry);</span>
+<span class="fc" id="L122">                rank++;</span>
+<span class="fc" id="L123">            }</span>
+
+<span class="fc" id="L125">            challenge.setIsProcessed(true);</span>
+<span class="fc" id="L126">            challengeRepository.save(challenge);</span>
+<span class="fc" id="L127">            return leaderboards;</span>
+        };
+    }
+
+    @Bean
+    public ItemWriter&lt;List&lt;Leaderboard&gt;&gt; challengeWriter() {
+<span class="fc" id="L133">        return chunk -&gt; {</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">            for (List&lt;Leaderboard&gt; list : chunk.getItems()) {</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">                for (Leaderboard entry : list) {</span>
+<span class="fc" id="L136">                    leaderboardRepository.save(entry);</span>
+<span class="fc" id="L137">                }</span>
+<span class="fc" id="L138">            }</span>
+<span class="fc" id="L139">        };</span>
+    }
+
+    // ==========================================
+    // 2. GAMIFICATION REWARD BATCH JOB
+    // ==========================================
+
+    @Bean
+    public Job gamificationJob() {
+<span class="fc" id="L148">        return new JobBuilder(&quot;gamificationJob&quot;, jobRepository)</span>
+<span class="fc" id="L149">                .start(gamificationStep())</span>
+<span class="fc" id="L150">                .build();</span>
+    }
+
+    @Bean
+    public Step gamificationStep() {
+<span class="fc" id="L155">        return new StepBuilder(&quot;gamificationStep&quot;, jobRepository)</span>
+<span class="fc" id="L156">                .&lt;User, List&lt;Badge&gt;&gt;chunk(10, transactionManager)</span>
+<span class="fc" id="L157">                .reader(userReader())</span>
+<span class="fc" id="L158">                .processor(userProcessor())</span>
+<span class="fc" id="L159">                .writer(badgeWriter())</span>
+<span class="fc" id="L160">                .build();</span>
+    }
+
+    @Bean
+    public ItemReader&lt;User&gt; userReader() {
+<span class="fc" id="L165">        return new ItemReader&lt;&gt;() {</span>
+            private List&lt;User&gt; users;
+<span class="fc" id="L167">            private int index = 0;</span>
+
+            @Override
+            public User read() {
+<span class="fc bfc" id="L171" title="All 2 branches covered.">                if (users == null) {</span>
+<span class="fc" id="L172">                    users = userRepository.findAll();</span>
+                }
+<span class="fc bfc" id="L174" title="All 2 branches covered.">                if (index &lt; users.size()) {</span>
+<span class="fc" id="L175">                    return users.get(index++);</span>
+                }
+<span class="fc" id="L177">                return null;</span>
+            }
+        };
+    }
+
+    @Bean
+    public ItemProcessor&lt;User, List&lt;Badge&gt;&gt; userProcessor() {
+<span class="fc" id="L184">        return user -&gt; {</span>
+<span class="fc" id="L185">            List&lt;Badge&gt; newBadges = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L186">            int points = user.getPoints();</span>
+
+            // Novice Badge (threshold &gt;= 100)
+<span class="pc bpc" id="L189" title="1 of 4 branches missed.">            if (points &gt;= 100 &amp;&amp; !badgeRepository.existsByUserIdAndName(user.getId(), &quot;Novice&quot;)) {</span>
+<span class="fc" id="L190">                Badge badge = new Badge(user, &quot;Novice&quot;, LocalDateTime.now());</span>
+<span class="fc" id="L191">                newBadges.add(badge);</span>
+<span class="fc" id="L192">                user.setLevel(&quot;Novice&quot;);</span>
+            }
+            // Athlete Badge (threshold &gt;= 500)
+<span class="pc bpc" id="L195" title="3 of 4 branches missed.">            if (points &gt;= 500 &amp;&amp; !badgeRepository.existsByUserIdAndName(user.getId(), &quot;Athlete&quot;)) {</span>
+<span class="nc" id="L196">                Badge badge = new Badge(user, &quot;Athlete&quot;, LocalDateTime.now());</span>
+<span class="nc" id="L197">                newBadges.add(badge);</span>
+<span class="nc" id="L198">                user.setLevel(&quot;Athlete&quot;);</span>
+            }
+            // Champion Badge (threshold &gt;= 1000)
+<span class="pc bpc" id="L201" title="3 of 4 branches missed.">            if (points &gt;= 1000 &amp;&amp; !badgeRepository.existsByUserIdAndName(user.getId(), &quot;Champion&quot;)) {</span>
+<span class="nc" id="L202">                Badge badge = new Badge(user, &quot;Champion&quot;, LocalDateTime.now());</span>
+<span class="nc" id="L203">                newBadges.add(badge);</span>
+<span class="nc" id="L204">                user.setLevel(&quot;Champion&quot;);</span>
+            }
+
+<span class="fc" id="L207">            userRepository.save(user);</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">            return newBadges.isEmpty() ? null : newBadges;</span>
+        };
+    }
+
+    @Bean
+    public ItemWriter&lt;List&lt;Badge&gt;&gt; badgeWriter() {
+<span class="fc" id="L214">        return chunk -&gt; {</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">            for (List&lt;Badge&gt; list : chunk.getItems()) {</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">                if (list != null) {</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">                    for (Badge b : list) {</span>
+<span class="fc" id="L218">                        badgeRepository.save(b);</span>
+<span class="fc" id="L219">                    }</span>
+                }
+<span class="fc" id="L221">            }</span>
+<span class="fc" id="L222">        };</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

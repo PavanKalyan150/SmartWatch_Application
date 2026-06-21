@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserTask.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">watch-leaderboard</a> &gt; <a href="index.source.html" class="el_package">com.leaderboard.model</a> &gt; <span class="el_source">UserTask.java</span></div><h1>UserTask.java</h1><pre class="source lang-java linenums">package com.leaderboard.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;user_tasks&quot;, uniqueConstraints = {
+    @UniqueConstraint(columnNames = {&quot;user_id&quot;, &quot;task_id&quot;})
+})
+public class UserTask {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = &quot;user_id&quot;, nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = &quot;task_id&quot;, nullable = false)
+    private Task task;
+
+<span class="fc" id="L24">    @Column(nullable = false)</span>
+<span class="fc" id="L25">    private Boolean completed = false;</span>
+
+    private LocalDateTime completionDate;
+
+<span class="fc" id="L29">    @Column(nullable = false)</span>
+<span class="fc" id="L30">    private Integer score = 0; // Current steps matching the task</span>
+
+<span class="fc" id="L32">    public UserTask() {}</span>
+
+<span class="fc" id="L34">    public UserTask(User user, Task task) {</span>
+<span class="fc" id="L35">        this.user = user;</span>
+<span class="fc" id="L36">        this.task = task;</span>
+<span class="fc" id="L37">    }</span>
+
+    public Long getId() {
+<span class="fc" id="L40">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="nc" id="L44">        this.id = id;</span>
+<span class="nc" id="L45">    }</span>
+
+    public User getUser() {
+<span class="fc" id="L48">        return user;</span>
+    }
+
+    public void setUser(User user) {
+<span class="nc" id="L52">        this.user = user;</span>
+<span class="nc" id="L53">    }</span>
+
+    public Task getTask() {
+<span class="fc" id="L56">        return task;</span>
+    }
+
+    public void setTask(Task task) {
+<span class="nc" id="L60">        this.task = task;</span>
+<span class="nc" id="L61">    }</span>
+
+    public Boolean getCompleted() {
+<span class="fc" id="L64">        return completed;</span>
+    }
+
+    public void setCompleted(Boolean completed) {
+<span class="nc" id="L68">        this.completed = completed;</span>
+<span class="nc" id="L69">    }</span>
+
+    public LocalDateTime getCompletionDate() {
+<span class="fc" id="L72">        return completionDate;</span>
+    }
+
+    public void setCompletionDate(LocalDateTime completionDate) {
+<span class="nc" id="L76">        this.completionDate = completionDate;</span>
+<span class="nc" id="L77">    }</span>
+
+    public Integer getScore() {
+<span class="fc" id="L80">        return score;</span>
+    }
+
+    public void setScore(Integer score) {
+<span class="nc" id="L84">        this.score = score;</span>
+<span class="nc" id="L85">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

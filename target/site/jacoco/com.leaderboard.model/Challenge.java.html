@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Challenge.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">watch-leaderboard</a> &gt; <a href="index.source.html" class="el_package">com.leaderboard.model</a> &gt; <span class="el_source">Challenge.java</span></div><h1>Challenge.java</h1><pre class="source lang-java linenums">package com.leaderboard.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = &quot;challenges&quot;)
+public class Challenge {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String title;
+
+    private String description;
+
+    @Column(nullable = false)
+    private Integer requiredSteps;
+
+    @Column(nullable = false)
+    private Integer pointsReward;
+
+    @Column(nullable = false)
+    private LocalDateTime expiryDate;
+
+<span class="fc" id="L30">    @ElementCollection(fetch = FetchType.EAGER)</span>
+    @CollectionTable(name = &quot;challenge_features&quot;, joinColumns = @JoinColumn(name = &quot;challenge_id&quot;))
+    @Column(name = &quot;feature&quot;)
+    private Set&lt;String&gt; requiredFeatures = new HashSet&lt;&gt;();
+
+    // Geospatial &amp; City Scope
+    private Double latitude;
+    private Double longitude;
+    private Double radiusKm;
+    private String city;
+
+<span class="fc" id="L41">    @Column(nullable = false)</span>
+<span class="fc" id="L42">    private Boolean isGlobal = true;</span>
+
+    // Status: tracks if ranking batch job has processed this challenge
+<span class="fc" id="L45">    @Column(nullable = false)</span>
+<span class="fc" id="L46">    private Boolean isProcessed = false;</span>
+
+<span class="fc" id="L48">    public Challenge() {}</span>
+
+    public Long getId() {
+<span class="fc" id="L51">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L55">        this.id = id;</span>
+<span class="fc" id="L56">    }</span>
+
+    public String getTitle() {
+<span class="fc" id="L59">        return title;</span>
+    }
+
+    public void setTitle(String title) {
+<span class="fc" id="L63">        this.title = title;</span>
+<span class="fc" id="L64">    }</span>
+
+    public String getDescription() {
+<span class="fc" id="L67">        return description;</span>
+    }
+
+    public void setDescription(String description) {
+<span class="fc" id="L71">        this.description = description;</span>
+<span class="fc" id="L72">    }</span>
+
+    public Integer getRequiredSteps() {
+<span class="fc" id="L75">        return requiredSteps;</span>
+    }
+
+    public void setRequiredSteps(Integer requiredSteps) {
+<span class="fc" id="L79">        this.requiredSteps = requiredSteps;</span>
+<span class="fc" id="L80">    }</span>
+
+    public Integer getPointsReward() {
+<span class="fc" id="L83">        return pointsReward;</span>
+    }
+
+    public void setPointsReward(Integer pointsReward) {
+<span class="fc" id="L87">        this.pointsReward = pointsReward;</span>
+<span class="fc" id="L88">    }</span>
+
+    public LocalDateTime getExpiryDate() {
+<span class="fc" id="L91">        return expiryDate;</span>
+    }
+
+    public void setExpiryDate(LocalDateTime expiryDate) {
+<span class="fc" id="L95">        this.expiryDate = expiryDate;</span>
+<span class="fc" id="L96">    }</span>
+
+    public Set&lt;String&gt; getRequiredFeatures() {
+<span class="fc" id="L99">        return requiredFeatures;</span>
+    }
+
+    public void setRequiredFeatures(Set&lt;String&gt; requiredFeatures) {
+<span class="fc" id="L103">        this.requiredFeatures = requiredFeatures;</span>
+<span class="fc" id="L104">    }</span>
+
+    public Double getLatitude() {
+<span class="fc" id="L107">        return latitude;</span>
+    }
+
+    public void setLatitude(Double latitude) {
+<span class="fc" id="L111">        this.latitude = latitude;</span>
+<span class="fc" id="L112">    }</span>
+
+    public Double getLongitude() {
+<span class="fc" id="L115">        return longitude;</span>
+    }
+
+    public void setLongitude(Double longitude) {
+<span class="fc" id="L119">        this.longitude = longitude;</span>
+<span class="fc" id="L120">    }</span>
+
+    public Double getRadiusKm() {
+<span class="fc" id="L123">        return radiusKm;</span>
+    }
+
+    public void setRadiusKm(Double radiusKm) {
+<span class="fc" id="L127">        this.radiusKm = radiusKm;</span>
+<span class="fc" id="L128">    }</span>
+
+    public String getCity() {
+<span class="fc" id="L131">        return city;</span>
+    }
+
+    public void setCity(String city) {
+<span class="fc" id="L135">        this.city = city;</span>
+<span class="fc" id="L136">    }</span>
+
+    public Boolean getIsGlobal() {
+<span class="fc" id="L139">        return isGlobal;</span>
+    }
+
+    public void setIsGlobal(Boolean global) {
+<span class="fc" id="L143">        isGlobal = global;</span>
+<span class="fc" id="L144">    }</span>
+
+    public Boolean getIsProcessed() {
+<span class="fc" id="L147">        return isProcessed;</span>
+    }
+
+    public void setIsProcessed(Boolean processed) {
+<span class="fc" id="L151">        isProcessed = processed;</span>
+<span class="fc" id="L152">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

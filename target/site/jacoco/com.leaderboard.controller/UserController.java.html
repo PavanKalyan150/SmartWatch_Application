@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">watch-leaderboard</a> &gt; <a href="index.source.html" class="el_package">com.leaderboard.controller</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package com.leaderboard.controller;
+
+import com.leaderboard.dto.TelemetryEvent;
+import com.leaderboard.dto.UserTelemetryMessage;
+import com.leaderboard.model.User;
+import com.leaderboard.model.UserChallenge;
+import com.leaderboard.model.UserTask;
+import com.leaderboard.service.KafkaProducerService;
+import com.leaderboard.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+public class UserController {
+
+    private final UserService userService;
+    private final KafkaProducerService kafkaProducerService;
+
+<span class="fc" id="L24">    public UserController(UserService userService, KafkaProducerService kafkaProducerService) {</span>
+<span class="fc" id="L25">        this.userService = userService;</span>
+<span class="fc" id="L26">        this.kafkaProducerService = kafkaProducerService;</span>
+<span class="fc" id="L27">    }</span>
+
+    // Telemetry ingestion endpoint (POST /user/{userId})
+    @PostMapping(&quot;/user/{userId}&quot;)
+    @PreAuthorize(&quot;hasAnyRole('USER', 'ADMIN')&quot;)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; ingestTelemetry(
+            @PathVariable Long userId,
+            @RequestBody TelemetryEvent event) {
+
+        // Validate required fields
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (event.getStepCountValue() == null) {</span>
+<span class="fc" id="L38">            throw new IllegalArgumentException(&quot;Step Count Value is missing&quot;);</span>
+        }
+<span class="pc bpc" id="L40" title="2 of 4 branches missed.">        if (event.getDate() == null || event.getDate().isBlank()) {</span>
+<span class="nc" id="L41">            throw new IllegalArgumentException(&quot;Date is missing&quot;);</span>
+        }
+<span class="pc bpc" id="L43" title="1 of 4 branches missed.">        if (event.getTags() == null || event.getTags().isEmpty()) {</span>
+<span class="fc" id="L44">            throw new IllegalArgumentException(&quot;Tags are missing&quot;);</span>
+        }
+
+        // Validate user existence first
+<span class="fc" id="L48">        userService.getUserById(userId);</span>
+
+        // Publish to Kafka queue
+<span class="fc" id="L51">        UserTelemetryMessage message = new UserTelemetryMessage(</span>
+                userId,
+<span class="fc" id="L53">                event.getStepCountValue(),</span>
+<span class="fc" id="L54">                event.getDate(),</span>
+<span class="fc" id="L55">                event.getTags()</span>
+        );
+<span class="fc" id="L57">        kafkaProducerService.sendTelemetry(message);</span>
+
+<span class="fc" id="L59">        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L60">        response.put(&quot;status&quot;, &quot;SUCCESS&quot;);</span>
+<span class="fc" id="L61">        response.put(&quot;message&quot;, &quot;Telemetry telemetry event published to Kafka&quot;);</span>
+<span class="fc" id="L62">        return new ResponseEntity&lt;&gt;(response, HttpStatus.CREATED);</span>
+    }
+
+    // GET /user/{userId} - retrieve profile details and active stats
+    @GetMapping(&quot;/user/{userId}&quot;)
+    @PreAuthorize(&quot;hasAnyRole('USER', 'ADMIN')&quot;)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; getUserData(@PathVariable Long userId) {
+<span class="fc" id="L69">        User user = userService.getUserById(userId);</span>
+<span class="fc" id="L70">        Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L71">        data.put(&quot;id&quot;, user.getId());</span>
+<span class="fc" id="L72">        data.put(&quot;fullName&quot;, user.getFullName());</span>
+<span class="fc" id="L73">        data.put(&quot;email&quot;, user.getEmail());</span>
+<span class="fc" id="L74">        data.put(&quot;phone&quot;, user.getPhone());</span>
+<span class="fc" id="L75">        data.put(&quot;points&quot;, user.getPoints());</span>
+<span class="fc" id="L76">        data.put(&quot;level&quot;, user.getLevel());</span>
+<span class="fc" id="L77">        data.put(&quot;device&quot;, user.getDevice());</span>
+<span class="fc" id="L78">        data.put(&quot;activities&quot;, userService.getUserActivities(userId));</span>
+<span class="fc" id="L79">        return ResponseEntity.ok(data);</span>
+    }
+
+    // PUT /user/{userId}/device - associate a device with a user
+    @PutMapping(&quot;/user/{userId}/device&quot;)
+    @PreAuthorize(&quot;hasAnyRole('USER', 'ADMIN')&quot;)
+    public ResponseEntity&lt;User&gt; associateDevice(@PathVariable Long userId, @RequestParam Long deviceId) {
+<span class="fc" id="L86">        return ResponseEntity.ok(userService.associateDevice(userId, deviceId));</span>
+    }
+
+    // POST /task/{taskId}/register - Register user to task
+    @PostMapping(&quot;/task/{taskId}/register&quot;)
+    @PreAuthorize(&quot;hasAnyRole('USER', 'ADMIN')&quot;)
+    public ResponseEntity&lt;UserTask&gt; registerForTask(@PathVariable Long taskId, @RequestParam Long userId) {
+<span class="fc" id="L93">        return new ResponseEntity&lt;&gt;(userService.registerForTask(userId, taskId), HttpStatus.CREATED);</span>
+    }
+
+    // POST /challenge/{challengeId}/register - Register user to challenge
+    @PostMapping(&quot;/challenge/{challengeId}/register&quot;)
+    @PreAuthorize(&quot;hasAnyRole('USER', 'ADMIN')&quot;)
+    public ResponseEntity&lt;UserChallenge&gt; registerForChallenge(@PathVariable Long challengeId, @RequestParam Long userId) {
+<span class="fc" id="L100">        return new ResponseEntity&lt;&gt;(userService.registerForChallenge(userId, challengeId), HttpStatus.CREATED);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

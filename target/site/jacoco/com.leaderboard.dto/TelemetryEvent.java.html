@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TelemetryEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">watch-leaderboard</a> &gt; <a href="index.source.html" class="el_package">com.leaderboard.dto</a> &gt; <span class="el_source">TelemetryEvent.java</span></div><h1>TelemetryEvent.java</h1><pre class="source lang-java linenums">package com.leaderboard.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Set;
+
+public class TelemetryEvent {
+
+    @JsonProperty(&quot;Step Count Value&quot;)
+    private Integer stepCountValue;
+
+    private String date; // YYYY-MM-DD format
+
+    private Set&lt;String&gt; tags; // Hardware feature tags active during the activity
+
+<span class="fc" id="L15">    public TelemetryEvent() {}</span>
+
+<span class="fc" id="L17">    public TelemetryEvent(Integer stepCountValue, String date, Set&lt;String&gt; tags) {</span>
+<span class="fc" id="L18">        this.stepCountValue = stepCountValue;</span>
+<span class="fc" id="L19">        this.date = date;</span>
+<span class="fc" id="L20">        this.tags = tags;</span>
+<span class="fc" id="L21">    }</span>
+
+    public Integer getStepCountValue() {
+<span class="fc" id="L24">        return stepCountValue;</span>
+    }
+
+    public void setStepCountValue(Integer stepCountValue) {
+<span class="fc" id="L28">        this.stepCountValue = stepCountValue;</span>
+<span class="fc" id="L29">    }</span>
+
+    public String getDate() {
+<span class="fc" id="L32">        return date;</span>
+    }
+
+    public void setDate(String date) {
+<span class="fc" id="L36">        this.date = date;</span>
+<span class="fc" id="L37">    }</span>
+
+    public Set&lt;String&gt; getTags() {
+<span class="fc" id="L40">        return tags;</span>
+    }
+
+    public void setTags(Set&lt;String&gt; tags) {
+<span class="fc" id="L44">        this.tags = tags;</span>
+<span class="fc" id="L45">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
