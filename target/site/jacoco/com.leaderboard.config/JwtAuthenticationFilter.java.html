@@ -41,14 +41,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 <span class="nc" id="L41">                        .collect(Collectors.toList());</span>
 
 <span class="nc" id="L43">                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(</span>
-                        username, null, authorities);
+<span class="nc" id="L44">                        username, null, authorities);</span>
 <span class="nc" id="L45">                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
 
 <span class="nc" id="L47">                SecurityContextHolder.getContext().setAuthentication(authentication);</span>
             }
 <span class="nc" id="L49">        } catch (Exception ex) {</span>
             // Log security filter exception if necessary
-<span class="fc" id="L51">        }</span>
+        }
 
 <span class="fc" id="L53">        filterChain.doFilter(request, response);</span>
 <span class="fc" id="L54">    }</span>

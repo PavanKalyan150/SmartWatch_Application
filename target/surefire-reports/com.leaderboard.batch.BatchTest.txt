@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.leaderboard.batch.BatchTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 35.42 s -- in com.leaderboard.batch.BatchTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 32.24 s -- in com.leaderboard.batch.BatchTest

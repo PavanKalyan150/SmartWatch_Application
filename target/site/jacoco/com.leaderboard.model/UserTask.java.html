@@ -21,12 +21,12 @@ public class UserTask {
     @JoinColumn(name = &quot;task_id&quot;, nullable = false)
     private Task task;
 
-<span class="fc" id="L24">    @Column(nullable = false)</span>
+    @Column(nullable = false)
 <span class="fc" id="L25">    private Boolean completed = false;</span>
 
     private LocalDateTime completionDate;
 
-<span class="fc" id="L29">    @Column(nullable = false)</span>
+    @Column(nullable = false)
 <span class="fc" id="L30">    private Integer score = 0; // Current steps matching the task</span>
 
 <span class="fc" id="L32">    public UserTask() {}</span>

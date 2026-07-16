@@ -16,7 +16,7 @@ import java.io.IOException;
         }
 <span class="pc bpc" id="L17" title="1 of 2 branches missed.">        if (value.length() &lt;= 4) {</span>
 <span class="nc" id="L18">            gen.writeString(&quot;*&quot;.repeat(value.length()));</span>
-        } else {
+<span class="nc" id="L19">        } else {</span>
 <span class="fc" id="L20">            String lastFour = value.substring(value.length() - 4);</span>
 <span class="fc" id="L21">            gen.writeString(&quot;*&quot;.repeat(value.length() - 4) + lastFour);</span>
         }

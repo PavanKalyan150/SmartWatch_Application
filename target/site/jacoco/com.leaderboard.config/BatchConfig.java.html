@@ -30,13 +30,13 @@ public class BatchConfig {
     private final LeaderboardRepository leaderboardRepository;
     private final BadgeRepository badgeRepository;
 
-    public BatchConfig(JobRepository jobRepository,
+<span class="fc" id="L33">    public BatchConfig(JobRepository jobRepository,</span>
                        PlatformTransactionManager transactionManager,
                        ChallengeRepository challengeRepository,
                        UserChallengeRepository userChallengeRepository,
                        UserRepository userRepository,
                        LeaderboardRepository leaderboardRepository,
-<span class="fc" id="L39">                       BadgeRepository badgeRepository) {</span>
+                       BadgeRepository badgeRepository) {
 <span class="fc" id="L40">        this.jobRepository = jobRepository;</span>
 <span class="fc" id="L41">        this.transactionManager = transactionManager;</span>
 <span class="fc" id="L42">        this.challengeRepository = challengeRepository;</span>
@@ -120,7 +120,7 @@ public class BatchConfig {
 <span class="fc" id="L120">                Leaderboard entry = new Leaderboard(challenge, uc.getUser(), rank, uc.getScore());</span>
 <span class="fc" id="L121">                leaderboards.add(entry);</span>
 <span class="fc" id="L122">                rank++;</span>
-<span class="fc" id="L123">            }</span>
+            }
 
 <span class="fc" id="L125">            challenge.setIsProcessed(true);</span>
 <span class="fc" id="L126">            challengeRepository.save(challenge);</span>
@@ -134,8 +134,8 @@ public class BatchConfig {
 <span class="fc bfc" id="L134" title="All 2 branches covered.">            for (List&lt;Leaderboard&gt; list : chunk.getItems()) {</span>
 <span class="fc bfc" id="L135" title="All 2 branches covered.">                for (Leaderboard entry : list) {</span>
 <span class="fc" id="L136">                    leaderboardRepository.save(entry);</span>
-<span class="fc" id="L137">                }</span>
-<span class="fc" id="L138">            }</span>
+                }
+            }
 <span class="fc" id="L139">        };</span>
     }
 
@@ -216,9 +216,9 @@ public class BatchConfig {
 <span class="pc bpc" id="L216" title="1 of 2 branches missed.">                if (list != null) {</span>
 <span class="fc bfc" id="L217" title="All 2 branches covered.">                    for (Badge b : list) {</span>
 <span class="fc" id="L218">                        badgeRepository.save(b);</span>
-<span class="fc" id="L219">                    }</span>
+                    }
                 }
-<span class="fc" id="L221">            }</span>
+            }
 <span class="fc" id="L222">        };</span>
     }
 }

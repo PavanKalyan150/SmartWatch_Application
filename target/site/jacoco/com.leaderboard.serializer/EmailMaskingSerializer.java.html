@@ -24,7 +24,7 @@ import java.io.IOException;
         String maskedLocal;
 <span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if (localPart.length() &lt;= 2) {</span>
 <span class="nc" id="L26">            maskedLocal = &quot;*&quot;.repeat(localPart.length());</span>
-        } else {
+<span class="nc" id="L27">        } else {</span>
 <span class="fc" id="L28">            maskedLocal = localPart.charAt(0) + &quot;***&quot; + localPart.charAt(localPart.length() - 1);</span>
         }
 <span class="fc" id="L30">        gen.writeString(maskedLocal + domainPart);</span>

@@ -19,10 +19,10 @@ public class UserService {
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
 
-    public UserService(UserRepository userRepository, DeviceRepository deviceRepository,
+<span class="fc" id="L22">    public UserService(UserRepository userRepository, DeviceRepository deviceRepository,</span>
                        UserActivityRepository userActivityRepository, TaskRepository taskRepository,
                        UserTaskRepository userTaskRepository, ChallengeRepository challengeRepository,
-<span class="fc" id="L25">                       UserChallengeRepository userChallengeRepository) {</span>
+                       UserChallengeRepository userChallengeRepository) {
 <span class="fc" id="L26">        this.userRepository = userRepository;</span>
 <span class="fc" id="L27">        this.deviceRepository = deviceRepository;</span>
 <span class="fc" id="L28">        this.userActivityRepository = userActivityRepository;</span>
@@ -39,7 +39,7 @@ public class UserService {
 
     public List&lt;UserActivity&gt; getUserActivities(Long userId) {
 <span class="fc" id="L41">        return userActivityRepository.findByUserIdAndActivityDateBetween(</span>
-                userId,
+<span class="fc" id="L42">                userId,</span>
 <span class="fc" id="L43">                java.time.LocalDate.now().minusDays(30),</span>
 <span class="fc" id="L44">                java.time.LocalDate.now()</span>
         );

@@ -37,6 +37,11 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
     }
 
+    public User getUserByPhone(String phone) {
+        return userRepository.findByPhone(phone)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with phone: " + phone));
+    }
+
     public List<UserActivity> getUserActivities(Long userId) {
         return userActivityRepository.findByUserIdAndActivityDateBetween(
                 userId,
@@ -90,5 +95,13 @@ public class UserService {
 
         UserChallenge userChallenge = new UserChallenge(user, challenge);
         return userChallengeRepository.save(userChallenge);
+    }
+
+    public List<UserChallenge> getUserChallenges(Long userId) {
+        return userChallengeRepository.findByUserId(userId);
+    }
+
+    public List<UserTask> getUserTasks(Long userId) {
+        return userTaskRepository.findByUserId(userId);
     }
 }

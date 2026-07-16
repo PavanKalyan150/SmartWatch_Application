@@ -22,13 +22,13 @@ public class UserActivity {
     @Column(name = &quot;activity_date&quot;, nullable = false)
     private LocalDate activityDate;
 
-<span class="pc" id="L25">    @Column(nullable = false)</span>
+    @Column(nullable = false)
 <span class="pc" id="L26">    private Integer stepCount = 0;</span>
 
-<span class="pc" id="L28">    @ElementCollection(fetch = FetchType.EAGER)</span>
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = &quot;user_activity_features&quot;, joinColumns = @JoinColumn(name = &quot;user_activity_id&quot;))
     @Column(name = &quot;feature&quot;)
-    private Set&lt;String&gt; features = new HashSet&lt;&gt;();
+<span class="pc" id="L31">    private Set&lt;String&gt; features = new HashSet&lt;&gt;();</span>
 
 <span class="fc" id="L33">    public UserActivity() {}</span>
 

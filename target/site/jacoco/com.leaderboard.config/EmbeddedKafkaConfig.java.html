@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Profile;
     public EmbeddedKafkaBroker embeddedKafkaBroker() {
         // Run embedded Kafka broker with 1 broker instance, controlled shutdown, and our telemetry topic
 <span class="nc" id="L16">        org.springframework.kafka.test.EmbeddedKafkaZKBroker broker = </span>
-            new org.springframework.kafka.test.EmbeddedKafkaZKBroker(1, true, &quot;smartwatch-telemetry&quot;);
+<span class="nc" id="L17">            new org.springframework.kafka.test.EmbeddedKafkaZKBroker(1, true, &quot;smartwatch-telemetry&quot;);</span>
 <span class="nc" id="L18">        broker.kafkaPorts(9092);</span>
 <span class="nc" id="L19">        return broker;</span>
     }

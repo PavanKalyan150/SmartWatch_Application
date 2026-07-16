@@ -21,6 +21,7 @@ com\leaderboard\model\Challenge.class
 com\leaderboard\dto\TelemetryEvent.class
 com\leaderboard\repository\UserRepository.class
 com\leaderboard\model\UserTask.class
+com\leaderboard\config\AdminSeeder.class
 com\leaderboard\dto\TokenResponse.class
 com\leaderboard\config\SecurityConfig.class
 com\leaderboard\controller\TaskController.class

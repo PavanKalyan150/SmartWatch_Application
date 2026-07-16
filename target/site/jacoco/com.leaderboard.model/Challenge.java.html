@@ -27,10 +27,10 @@ public class Challenge {
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
-<span class="fc" id="L30">    @ElementCollection(fetch = FetchType.EAGER)</span>
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = &quot;challenge_features&quot;, joinColumns = @JoinColumn(name = &quot;challenge_id&quot;))
     @Column(name = &quot;feature&quot;)
-    private Set&lt;String&gt; requiredFeatures = new HashSet&lt;&gt;();
+<span class="fc" id="L33">    private Set&lt;String&gt; requiredFeatures = new HashSet&lt;&gt;();</span>
 
     // Geospatial &amp; City Scope
     private Double latitude;
@@ -38,11 +38,11 @@ public class Challenge {
     private Double radiusKm;
     private String city;
 
-<span class="fc" id="L41">    @Column(nullable = false)</span>
+    @Column(nullable = false)
 <span class="fc" id="L42">    private Boolean isGlobal = true;</span>
 
     // Status: tracks if ranking batch job has processed this challenge
-<span class="fc" id="L45">    @Column(nullable = false)</span>
+    @Column(nullable = false)
 <span class="fc" id="L46">    private Boolean isProcessed = false;</span>
 
 <span class="fc" id="L48">    public Challenge() {}</span>

@@ -21,15 +21,15 @@ public class UserChallenge {
     @JoinColumn(name = &quot;challenge_id&quot;, nullable = false)
     private Challenge challenge;
 
-<span class="fc" id="L24">    @Column(nullable = false)</span>
+    @Column(nullable = false)
 <span class="fc" id="L25">    private Boolean completed = false;</span>
 
-<span class="fc" id="L27">    @Column(nullable = false)</span>
+    @Column(nullable = false)
 <span class="fc" id="L28">    private Integer score = 0; // Current steps matching the challenge</span>
 
     private Integer rank; // Allotted rank from Spring Batch ranking job
 
-<span class="fc" id="L32">    @Column(nullable = false)</span>
+    @Column(nullable = false)
 <span class="fc" id="L33">    private Integer pointsAwarded = 0;</span>
 
     private LocalDateTime completionDate;

@@ -38,11 +38,11 @@ public class User {
     @JoinColumn(name = &quot;device_id&quot;)
     private Device device;
 
-<span class="fc" id="L41">    @Column(nullable = false)</span>
+    @Column(nullable = false)
 <span class="fc" id="L42">    private Integer points = 0;</span>
 
-<span class="fc" id="L44">    @Column(nullable = false)</span>
-    private String level = &quot;Novice&quot;;
+    @Column(nullable = false)
+<span class="fc" id="L45">    private String level = &quot;Novice&quot;;</span>
 
 <span class="fc" id="L47">    public User() {}</span>
 

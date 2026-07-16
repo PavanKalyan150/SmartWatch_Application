@@ -61,7 +61,7 @@ public class SecurityConfig {
 <span class="nc" id="L61">                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);</span>
 <span class="nc" id="L62">                    ErrorResponse errorResponse = new ErrorResponse(&quot;FORBIDDEN&quot;, &quot;Access denied: &quot; + accessDeniedException.getMessage());</span>
 <span class="nc" id="L63">                    response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));</span>
-<span class="nc" id="L64">                })</span>
+<span class="pc" id="L64">                })</span>
             )
 <span class="fc" id="L66">            .authorizeHttpRequests(auth -&gt; auth</span>
 <span class="fc" id="L67">                .requestMatchers(&quot;/health&quot;, &quot;/auth/**&quot;, &quot;/swagger-ui/**&quot;, &quot;/v3/api-docs/**&quot;, &quot;/swagger-ui.html&quot;, &quot;/api-docs/**&quot;, &quot;/api-docs&quot;).permitAll()</span>

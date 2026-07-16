@@ -21,9 +21,9 @@ public class KafkaProducerService {
         try {
 <span class="fc" id="L22">            String jsonPayload = objectMapper.writeValueAsString(message);</span>
 <span class="fc" id="L23">            kafkaTemplate.send(TOPIC, message.getUserId().toString(), jsonPayload);</span>
-<span class="nc" id="L24">        } catch (Exception e) {</span>
+<span class="pc" id="L24">        } catch (Exception e) {</span>
 <span class="nc" id="L25">            throw new RuntimeException(&quot;Failed to send message to Kafka&quot;, e);</span>
-<span class="fc" id="L26">        }</span>
+        }
 <span class="fc" id="L27">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

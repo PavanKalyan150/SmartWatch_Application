@@ -1,6 +1,5 @@
 package com.leaderboard.dto;
 
-import com.leaderboard.model.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -19,7 +18,6 @@ public class RegisterRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
-    private Role role; // Optional, defaults to ROLE_USER
 
     public RegisterRequest() {}
 
@@ -55,11 +53,4 @@ public class RegisterRequest {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }

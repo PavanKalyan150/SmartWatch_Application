@@ -10,6 +10,7 @@ import com.leaderboard.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -62,6 +63,17 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    // GET /user/me - retrieve current user profile details
+    @GetMapping("/user/me")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<Map<String, Object>> getCurrentUserData(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User user = userService.getUserByPhone(authentication.getName());
+        return getUserData(user.getId());
+    }
+
     // GET /user/{userId} - retrieve profile details and active stats
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -98,5 +110,19 @@ public class UserController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<UserChallenge> registerForChallenge(@PathVariable Long challengeId, @RequestParam Long userId) {
         return new ResponseEntity<>(userService.registerForChallenge(userId, challengeId), HttpStatus.CREATED);
+    }
+
+    // GET /user/{userId}/challenges - get challenges joined by user
+    @GetMapping("/user/{userId}/challenges")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<java.util.List<UserChallenge>> getUserChallenges(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getUserChallenges(userId));
+    }
+
+    // GET /user/{userId}/tasks - get tasks joined by user
+    @GetMapping("/user/{userId}/tasks")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<java.util.List<UserTask>> getUserTasks(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getUserTasks(userId));
     }
 }

@@ -27,10 +27,10 @@ public class RankController {
 <span class="fc" id="L27">            response.put(&quot;status&quot;, &quot;SUCCESS&quot;);</span>
 <span class="fc" id="L28">            response.put(&quot;message&quot;, &quot;Ranking batch job triggered successfully&quot;);</span>
 <span class="fc" id="L29">            return ResponseEntity.ok(response);</span>
-<span class="fc" id="L30">        } catch (Exception e) {</span>
-<span class="fc" id="L31">            response.put(&quot;status&quot;, &quot;FAILED&quot;);</span>
-<span class="fc" id="L32">            response.put(&quot;message&quot;, &quot;Error starting ranking batch job: &quot; + e.getMessage());</span>
-<span class="fc" id="L33">            return ResponseEntity.internalServerError().body(response);</span>
+<span class="nc" id="L30">        } catch (Exception e) {</span>
+<span class="nc" id="L31">            response.put(&quot;status&quot;, &quot;FAILED&quot;);</span>
+<span class="nc" id="L32">            response.put(&quot;message&quot;, &quot;Error starting ranking batch job: &quot; + e.getMessage());</span>
+<span class="nc" id="L33">            return ResponseEntity.internalServerError().body(response);</span>
         }
     }
 }

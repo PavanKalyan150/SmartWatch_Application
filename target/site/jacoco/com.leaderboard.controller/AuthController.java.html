@@ -26,8 +26,8 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
 
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-<span class="fc" id="L30">                          PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {</span>
+<span class="fc" id="L29">    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,</span>
+                          PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {
 <span class="fc" id="L31">        this.authenticationManager = authenticationManager;</span>
 <span class="fc" id="L32">        this.userRepository = userRepository;</span>
 <span class="fc" id="L33">        this.passwordEncoder = passwordEncoder;</span>
@@ -57,7 +57,7 @@ public class AuthController {
     @PostMapping(&quot;/login&quot;)
     public ResponseEntity&lt;TokenResponse&gt; authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 <span class="fc" id="L59">        Authentication authentication = authenticationManager.authenticate(</span>
-                new UsernamePasswordAuthenticationToken(
+<span class="fc" id="L60">                new UsernamePasswordAuthenticationToken(</span>
 <span class="fc" id="L61">                        loginRequest.getPhone(),</span>
 <span class="fc" id="L62">                        loginRequest.getPassword()</span>
                 )

@@ -21,9 +21,9 @@ public class ChallengeService {
     private final UserChallengeRepository userChallengeRepository;
     private final UserRepository userRepository;
 
-    public ChallengeService(ChallengeRepository challengeRepository,
+<span class="fc" id="L24">    public ChallengeService(ChallengeRepository challengeRepository,</span>
                             UserChallengeRepository userChallengeRepository,
-<span class="fc" id="L26">                            UserRepository userRepository) {</span>
+                            UserRepository userRepository) {
 <span class="fc" id="L27">        this.challengeRepository = challengeRepository;</span>
 <span class="fc" id="L28">        this.userChallengeRepository = userChallengeRepository;</span>
 <span class="fc" id="L29">        this.userRepository = userRepository;</span>
@@ -33,7 +33,7 @@ public class ChallengeService {
         // If geospatial or city scope is provided, set isGlobal to false
 <span class="pc bpc" id="L34" title="4 of 6 branches missed.">        if (challenge.getCity() != null || (challenge.getLatitude() != null &amp;&amp; challenge.getLongitude() != null)) {</span>
 <span class="nc" id="L35">            challenge.setIsGlobal(false);</span>
-        } else {
+<span class="nc" id="L36">        } else {</span>
 <span class="fc" id="L37">            challenge.setIsGlobal(true);</span>
         }
 <span class="fc" id="L39">        challenge.setIsProcessed(false);</span>
@@ -63,7 +63,7 @@ public class ChallengeService {
 <span class="fc" id="L63">        existing.setCity(details.getCity());</span>
 <span class="pc bpc" id="L64" title="4 of 6 branches missed.">        if (details.getCity() != null || (details.getLatitude() != null &amp;&amp; details.getLongitude() != null)) {</span>
 <span class="nc" id="L65">            existing.setIsGlobal(false);</span>
-        } else {
+<span class="nc" id="L66">        } else {</span>
 <span class="fc" id="L67">            existing.setIsGlobal(true);</span>
         }
 <span class="fc" id="L69">        return challengeRepository.save(existing);</span>

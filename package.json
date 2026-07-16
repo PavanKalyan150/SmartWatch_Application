@@ -1,0 +1,8 @@
+{
+  "name": "pulse-iq-parent",
+  "version": "1.0.0",
+  "description": "Parent runner for PULSE.IQ SmartWatch Leaderboard application",
+  "scripts": {
+    "dev": "start \"Pulse.IQ Backend (Spring Boot)\" cmd /k \"mvn spring-boot:run\" && start \"Pulse.IQ Frontend (React + Vite)\" cmd /k \"npm run dev --prefix frontend\""
+  }
+}
