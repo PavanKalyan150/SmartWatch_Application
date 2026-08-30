@@ -1,0 +1,2 @@
+aws s3 sync . s3://dna-learningndev-prod-bucket/repos/scaffolding_java_9ceb2ef2-9125-4897-a34d-8e5284b1f55f/master/ --delete --exclude ./venv/\* --exclude ./env/\*
+echo Success
