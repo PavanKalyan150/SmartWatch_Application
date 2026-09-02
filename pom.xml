@@ -10,11 +10,11 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>com.hashedin</groupId>
-	<artifactId>huSpark</artifactId>
+	<groupId>com.smartwatch</groupId>
+	<artifactId>smartwatch-leaderboard</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>huSpark</name>
-	<description>Demo project for Spring Boot</description>
+	<name>smartwatch-leaderboard</name>
+	<description>Smartwatch activity and leaderboard application</description>
 
 	<properties>
 		<java.version>17</java.version>

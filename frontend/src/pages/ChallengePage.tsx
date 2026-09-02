@@ -1,0 +1,11 @@
+import { CalendarDays, Medal, Target, Trophy } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { api } from '../api'
+import type { Challenge, ChallengeRank } from '../types'
+
+const date = (value: string) => new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(value))
+export function ChallengePage() { const { id } = useParams(); const [challenge, setChallenge] = useState<Challenge | null>(null); const [rank, setRank] = useState<ChallengeRank | null>(null); const [error, setError] = useState('')
+  useEffect(() => { if (!id) return; api<Challenge>(`/challenges/${id}`).then(setChallenge).catch(e => setError(e.message)); api<ChallengeRank>(`/challenges/${id}/user`).then(setRank).catch(() => null) }, [id])
+  if (error) return <div className="notice error">{error}</div>; if (!challenge) return <div className="loading">Loading challenge…</div>
+  return <><section className="challenge-hero"><span className="status">{challenge.status}</span><h1>{challenge.name}</h1><p>{challenge.description || 'Set your goal, stay consistent, and see what you can achieve.'}</p><div><span><CalendarDays size={17} /> {date(challenge.startTime)} – {date(challenge.endTime)}</span><span><Trophy size={17} /> {challenge.rewardScheme} rewards</span></div></section><div className="detail-grid"><section className="panel"><p className="eyebrow">YOUR STANDING</p><div className="rank"><Medal /><div><strong>{rank?.rank ? `#${rank.rank}` : 'Pending'}</strong><p>{rank?.rank ? 'Current leaderboard rank' : 'Rank will appear after scores are published.'}</p></div></div><div className="rank-stats"><span><small>Score</small><b>{rank?.finalScore ?? 0}</b></span><span><small>Points earned</small><b>{rank?.pointsAwarded ?? 0}</b></span></div></section><section className="panel"><p className="eyebrow">CHALLENGE TASKS</p><h2>What to complete</h2><div className="challenge-tasks">{challenge.tasks?.map(task => <div key={task.id}><Target size={18} /><span><b>{task.name}</b><small>{task.requiredMetric}: {task.targetValue} · +{task.rewardPoints} pts</small></span></div>) || <p>No tasks have been assigned yet.</p>}</div></section></div></> }

@@ -32,7 +32,7 @@ public class DeviceController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/")
+    @GetMapping({"", "/"})
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<DeviceResponse>> getAllDevices() {
         log.debug("Fetching all devices");
